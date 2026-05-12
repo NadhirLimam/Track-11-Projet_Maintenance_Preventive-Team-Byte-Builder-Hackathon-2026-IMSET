@@ -8,6 +8,7 @@ import Equipment from './pages/Equipment';
 import Tasks     from './pages/Tasks';
 import Calendar  from './pages/Calendar';
 import MyTasks   from './pages/MyTasks';
+import Profile   from './pages/Profile';
 
 const ProtectedRoute = ({ children }) => {
   const { currentUser } = useAuthStore();
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/tasks"     element={<Tasks />} />
         <Route path="/calendar"  element={<Calendar />} />
         <Route path="/my-tasks"  element={<MyTasks />} />
+        <Route path="/profile"   element={<Profile />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

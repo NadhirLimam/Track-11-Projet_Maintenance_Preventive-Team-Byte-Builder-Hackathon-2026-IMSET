@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { Menu, Search, Sun, Moon, LogOut, User, Settings } from 'lucide-react';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { useUIStore }   from '../../stores/useUIStore';
@@ -109,13 +109,14 @@ export default function TopBar() {
 
               {/* Menu items */}
               <div className="py-1">
-                <button
+                <Link
+                  to="/profile"
                   onClick={() => setProfileOpen(false)}
                   className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-app-text hover:bg-app-bg transition-colors"
                 >
                   <User className="w-4 h-4 text-app-muted" />
                   Profile
-                </button>
+                </Link>
 
                 <button
                   onClick={() => { toggleDarkMode(); setProfileOpen(false); }}

@@ -62,6 +62,49 @@ export const useAuthStore = create(
         return 'ok';
       },
 
+      // updateProfile({ firstName, lastName })
+      // Updates currentUser in state and the matching entry in registeredUsers.
+      // Returns 'ok'.
+      updateProfile: ({ firstName, lastName }) => {
+        const trimFirst = firstName.trim();
+        const trimLast  = lastName.trim();
+        set((state) => ({
+          currentUser: { ...state.currentUser, firstName: trimFirst, lastName: trimLast },
+          registeredUsers: state.registeredUsers.map((u) =>
+            u.id === state.currentUser?.id
+              ? { ...u, firstName: trimFirst, lastName: trimLast }
+              : u
+          ),
+        }));
+        return 'ok';
+      },
+
+      // changePassword({ currentPassword, newPassword })
+      // Verifies the user's current password, then persists the new one.
+      // Returns 'ok' or 'wrong' (bad current password).
+      changePassword: ({ currentPassword, newPassword }) => {
+        const { currentUser, registeredUsers, passwordOverrides = {} } = get();
+        if (!currentUser) return 'error';
+
+        // Effective password: override > registeredUsers > seedUsers
+        const realCurrent =
+          passwordOverrides[currentUser.id] ??
+          registeredUsers.find((u) => u.id === currentUser.id)?.password ??
+          seedUsers.find((u) => u.id === currentUser.id)?.password ??
+          null;
+
+        if (realCurrent === null) return 'error';
+        if (realCurrent !== currentPassword) return 'wrong';
+
+        set((state) => ({
+          passwordOverrides: { ...(state.passwordOverrides ?? {}), [currentUser.id]: newPassword },
+          registeredUsers: state.registeredUsers.map((u) =>
+            u.id === currentUser.id ? { ...u, password: newPassword } : u
+          ),
+        }));
+        return 'ok';
+      },
+
       // logout()
       logout: () => set({ currentUser: null }),
     }),
