@@ -1,9 +1,9 @@
 // useAuthStore.js
-// Handles authentication: login, logout, and quick demo login.
+// Handles authentication: login, register, logout.
 // Persisted to localStorage (key: 'maintixpro-auth') so the session
 // survives page refresh without a real backend.
-// No real JWT — matches email+password against seed data client-side.
-// The password is STRIPPED from the stored user object for safety.
+// No real JWT — matches email+password against seed data + registered users client-side.
+// Passwords are NEVER stored in state — only the sanitized user object.
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -11,44 +11,62 @@ import { seedUsers } from '../data/users';
 
 export const useAuthStore = create(
   persist(
-    (set) => ({
-      // currentUser: the logged-in user (without password), or null if logged out
+    (set, get) => ({
       currentUser: null,
 
-      // login(email, password)
-      // Finds a matching user in seedUsers, strips the password,
-      // then stores the sanitized user object in state.
-      // Returns true on success, false if credentials are wrong.
-      login: (email, password) => {
-        const match = seedUsers.find(
-          (u) => u.email === email && u.password === password
-        );
-        if (!match) return false;
+      // registeredUsers: users created via the sign-up form.
+      // Persisted alongside currentUser so they survive page refresh.
+      // Passwords ARE stored here (hashed in a real app; plain strings for demo only).
+      registeredUsers: [],
 
-        // Strip password before storing — never keep credentials in state
+      // login(email, password)
+      // Checks both seedUsers and registeredUsers.
+      // Returns 'ok' on success, 'invalid' if credentials don't match.
+      login: (email, password) => {
+        const allUsers = [...seedUsers, ...get().registeredUsers];
+        const match = allUsers.find(
+          (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+        );
+        if (!match) return 'invalid';
+
         const { password: _pwd, ...safeUser } = match;
         set({ currentUser: safeUser });
-        return true;
+        return 'ok';
       },
 
-      // loginAs(role)
-      // Bypasses the form — finds the first user with the matching role
-      // and logs them in instantly. Used by Quick Demo buttons on the login page.
-      loginAs: (role) => {
-        const match = seedUsers.find((u) => u.role === role);
-        if (!match) return;
+      // register({ firstName, lastName, email, password })
+      // Returns 'ok' on success, 'exists' if the email is already taken.
 
-        const { password: _pwd, ...safeUser } = match;
+      register: ({ firstName, lastName, email, password }) => {
+        const allUsers = [...seedUsers, ...get().registeredUsers];
+        const exists = allUsers.some(
+          (u) => u.email.toLowerCase() === email.toLowerCase()
+        );
+        if (exists) return 'exists';
+
+        const newUser = {
+          id: `user-${Date.now()}`,
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          email: email.trim().toLowerCase(),
+          password, // stored only in registeredUsers (not in state as currentUser)
+          role: 'admin',
+          isActive: true,
+        };
+
+        set((state) => ({ registeredUsers: [...state.registeredUsers, newUser] }));
+
+        // Auto-login after registration
+        const { password: _pwd, ...safeUser } = newUser;
         set({ currentUser: safeUser });
+        return 'ok';
       },
 
       // logout()
-      // Clears the currentUser from state. The persist middleware will also
-      // clear it from localStorage so the session is fully destroyed.
       logout: () => set({ currentUser: null }),
     }),
     {
-      name: 'maintixpro-auth', // localStorage key
+      name: 'maintixpro-auth',
     }
   )
 );

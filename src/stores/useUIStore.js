@@ -15,8 +15,8 @@ export const useUIStore = create((set) => ({
   // modalData: any extra data to pass to the active modal (e.g. equipment object to edit)
   modalData: null,
 
-  // darkMode: the app is dark by default — matches the design system
-  darkMode: true,
+  // darkMode: persisted so the user's preference survives page reload
+  darkMode: localStorage.getItem('maintixpro-darkmode') !== 'false',
 
   // toggleSidebar()
   // Flips the sidebar between expanded (w-60) and collapsed (w-16) modes.
@@ -34,5 +34,9 @@ export const useUIStore = create((set) => ({
   // toggleDarkMode()
   // Flips the dark/light mode preference. Persisting dark mode is intentionally
   // skipped — the app always starts in dark mode as per the design system.
-  toggleDarkMode: () => set((s) => ({ darkMode: !s.darkMode })),
+  toggleDarkMode: () => set((s) => {
+    const next = !s.darkMode;
+    localStorage.setItem('maintixpro-darkmode', String(next));
+    return { darkMode: next };
+  }),
 }));

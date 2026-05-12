@@ -26,14 +26,26 @@
   --font-mono: "JetBrains Mono", monospace;
 }
 
+/* ─── Light mode overrides ───────────────────────────────────────────────────
+   When .dark is absent from <html>, these CSS variables replace the dark tokens.
+   Tailwind utility classes like bg-app-bg automatically pick up the new value.  */
+:root:not(.dark) {
+  --color-app-bg:      #F5F7FA;
+  --color-app-surface: #FFFFFF;
+  --color-app-border:  #E2E8F0;
+  --color-app-text:    #111827;
+  --color-app-muted:   #6B7280;
+  --color-brand:       #0A84FF;
+}
+
 /* ─── Base styles ─────────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
 body {
-  background-color: #0D1117;
-  color: #E6EDF3;
+  background-color: var(--color-app-bg, #0D1117);
+  color: var(--color-app-text, #E6EDF3);
   font-family: "Inter", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

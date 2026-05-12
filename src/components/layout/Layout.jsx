@@ -17,11 +17,20 @@
  * Only the <main> element scrolls.
  */
 
+import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import TopBar  from './TopBar';
+import { useUIStore } from '../../stores/useUIStore';
 
 export default function Layout() {
+  const darkMode = useUIStore((s) => s.darkMode);
+
+  // Apply / remove the .dark class on <html> whenever darkMode changes
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', darkMode);
+  }, [darkMode]);
+
   return (
     <div className="flex h-screen bg-app-bg overflow-hidden">
       {/* ── Sidebar (fixed left column) ─────────────────────────────────── */}

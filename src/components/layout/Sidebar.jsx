@@ -41,8 +41,7 @@ export default function Sidebar() {
   const { sidebarOpen }          = useUIStore();
   const navigate                 = useNavigate();
 
-  // Determine which navigation links to show based on role
-  const links = currentUser?.role === 'admin' ? adminLinks : techLinks;
+  const links = [...adminLinks, ...techLinks];
 
   // Generate initials from first and last name for the avatar circle
   const initials = currentUser
