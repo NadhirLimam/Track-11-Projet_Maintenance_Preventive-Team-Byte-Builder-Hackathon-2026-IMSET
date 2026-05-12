@@ -1,0 +1,89 @@
+/* ─── Tailwind v4 CSS-first setup ──────────────────────────────────────────── */
+/* In v4, @import "tailwindcss" replaces @tailwind base/components/utilities.   */
+/* Theme tokens live here in @theme instead of tailwind.config.js.              */
+@import "tailwindcss";
+
+/* ─── Dark mode strategy ─────────────────────────────────────────────────────
+   Enable class-based dark mode: dark: variants activate when a .dark class
+   exists on any ancestor. The <html> tag in index.html always has class="dark"
+   so the app is dark-mode-first by default.                                     */
+@custom-variant dark (&:is(.dark, .dark *));
+
+/* ─── MaintixPro design tokens ───────────────────────────────────────────────
+   These generate Tailwind utility classes:
+     --color-app-bg      → bg-app-bg, text-app-bg, border-app-bg …
+     --color-brand       → bg-brand, text-brand …
+     --font-sans         → font-sans class uses Inter                            */
+@theme {
+  --color-app-bg:      #0D1117;
+  --color-app-surface: #161B22;
+  --color-app-border:  #21262D;
+  --color-app-text:    #E6EDF3;
+  --color-app-muted:   #8B949E;
+  --color-brand:       #0A84FF;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+/* ─── Base styles ─────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #0D1117;
+  color: #E6EDF3;
+  font-family: "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+
+/* ─── Custom animations ──────────────────────────────────────────────────────
+   These cannot be expressed as Tailwind utilities so they live here.           */
+
+/* Pulsing red glow for critical equipment cards.
+   Applied via the .status-pulse-critical class on the card wrapper.            */
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0   rgba(255, 69, 58, 0.5); }
+  70%  { box-shadow: 0 0 0 8px rgba(255, 69, 58, 0);   }
+  100% { box-shadow: 0 0 0 0   rgba(255, 69, 58, 0);   }
+}
+
+.status-pulse-critical {
+  animation: pulse-ring 2s infinite;
+}
+
+/* Shimmer gradient for loading skeleton placeholders.
+   Applied via the .skeleton class on placeholder elements.                     */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #161B22 25%,
+    #21262D 50%,
+    #161B22 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ─── Print styles ───────────────────────────────────────────────────────────
+   Hides UI chrome when printing the intervention sheet.
+   .no-print  — sidebar, topbar, buttons, etc.
+   .print-only — content that only appears in the printout                      */
+@media print {
+  .no-print   { display: none !important; }
+  .print-only { display: block !important; }
+  body        { background: white; color: black; }
+}
