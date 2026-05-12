@@ -7,27 +7,27 @@
 export const seedUsers = [
   {
     id: 'user-1',
-    firstName: 'Ahmed',
-    lastName: 'Benali',
-    email: 'admin@maintixpro.com',
+    firstName: 'Nedhir',
+    lastName: 'Limam',
+    email: 'nedhir@maintixpro.com',
     password: 'Admin@2026',
     role: 'admin',      // Admin sees all pages and can manage everything
     isActive: true,
   },
   {
     id: 'user-2',
-    firstName: 'Sara',
-    lastName: 'Meziane',
-    email: 'sara@maintixpro.com',
+    firstName: 'Beher',
+    lastName: 'Hewech',
+    email: 'beher@maintixpro.com',
     password: 'Tech@2026',
     role: 'technician', // Technicians only see their own assigned tasks
     isActive: true,
   },
   {
     id: 'user-3',
-    firstName: 'Karim',
-    lastName: 'Oualid',
-    email: 'karim@maintixpro.com',
+    firstName: 'Ranim',
+    lastName: 'Selmi',
+    email: 'ranim@maintixpro.com',
     password: 'Tech@2026',
     role: 'technician',
     isActive: true,
